@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ABOI Demonlist</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+/* ABOI Demonlist – Pointercrate-inspired design (static / GitHub Pages) */
+
+:root {
+    --bg: #f5f7fa;
+    --card: #ffffff;
+    --text: #1a1a2e;
+    --text-muted: #5a5a72;
+    --primary: #3b82f6;
+    --primary-dark: #2563eb;
+    --accent: #1e3a8a;
+    --border: #e2e8f0;
+    --success: #10b981;
+    --danger: #ef4444;
+    --sidebar-width: 280px;
+    --header-height: 56px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.5;
+    position: relative;
+}
+
+.side-decoration {
+    position: fixed;
+    top: 0; bottom: 0;
+    width: 48px;
+    z-index: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+        0deg,
+        #3b82f6 0px, #3b82f6 12px,
+        #2563eb 12px, #2563eb 24px,
+        #1d4ed8 24px, #1d4ed8 36px,
+        #1e40af 36px, #1e40af 48px
+    );
+    opacity: 0.85;
+}
+.side-decoration.left { left: 0; }
+.side-decoration.right { right: 0; }
+@media (max-width: 900px) { .side-decoration { display: none; } }
+
+.top-header {
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    height: var(--header-height);
+}
+.header-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.logo {
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: var(--accent);
+    text-decoration: none;
+    letter-spacing: -0.02em;
+}
+.logo span { color: var(--primary); font-weight: 600; }
+
+.main-nav { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.main-nav a, .main-nav button.linkish {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: all 0.15s;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+}
+.main-nav a:hover, .main-nav button.linkish:hover {
+    color: var(--primary);
+    background: #eff6ff;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 24px;
+    position: relative;
+    z-index: 1;
+}
+
+.flash-messages { margin-bottom: 20px; }
+.flash {
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+.flash.success { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+.flash.error { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+.flash.info { background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
+
+.list-tabs {
+    display: flex;
+    gap: 4px;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 4px;
+    margin-bottom: 24px;
+    max-width: 480px;
+}
+.list-tabs .tab {
+    flex: 1;
+    text-align: center;
+    padding: 10px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--text-muted);
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.15s;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    font-family: inherit;
+}
+.list-tabs .tab:hover { color: var(--text); background: #f1f5f9; }
+.list-tabs .tab.active { background: var(--primary); color: #fff; }
+
+.list-layout {
+    display: grid;
+    grid-template-columns: 1fr var(--sidebar-width);
+    gap: 28px;
+}
+@media (max-width: 800px) {
+    .list-layout { grid-template-columns: 1fr; }
+}
+
+.demon-list { display: flex; flex-direction: column; gap: 12px; }
+.section-desc {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    margin-bottom: 16px;
+    line-height: 1.6;
+}
+
+.demon-card {
+    display: flex;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    transition: box-shadow 0.2s, transform 0.15s;
+    cursor: pointer;
+}
+.demon-card:hover {
+    box-shadow: 0 4px 20px rgba(37, 99, 235, 0.12);
+    transform: translateY(-1px);
+    border-color: #bfdbfe;
+}
+.demon-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.demon-thumb {
+    width: 140px;
+    min-height: 90px;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.thumb-placeholder {
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.5rem;
+    opacity: 0.9;
+}
+.demon-info {
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.demon-title { font-size: 1.15rem; font-weight: 600; margin-bottom: 4px; }
+.demon-publisher { font-size: 0.875rem; color: var(--text-muted); margin-bottom: 4px; }
+.demon-publisher strong { color: var(--primary); }
+.demon-points { font-size: 0.8rem; color: var(--text-muted); }
+
+.sidebar { display: flex; flex-direction: column; gap: 16px; }
+.sidebar-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+}
+.sidebar-box h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+.sidebar-box p { font-size: 0.875rem; color: var(--text-muted); margin-bottom: 12px; }
+.editor-list { list-style: none; font-size: 0.875rem; }
+.editor-list li { padding: 4px 0; }
+
+.btn {
+    display: inline-block;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    border: 1px solid var(--border);
+    background: #fff;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+}
+.btn:hover { background: #f8fafc; border-color: #cbd5e1; }
+.btn-primary { background: var(--primary); color: #fff; border-color: var(--primary); }
+.btn-primary:hover { background: var(--primary-dark); border-color: var(--primary-dark); }
+.btn-success { background: var(--success); color: #fff; border-color: var(--success); }
+.btn-danger { background: var(--danger); color: #fff; border-color: var(--danger); }
+.btn-sm { padding: 4px 10px; font-size: 0.8rem; }
+
+.card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+}
+.card h2 { font-size: 1.15rem; margin-bottom: 16px; }
+
+.form-page { max-width: 560px; margin: 0 auto; }
+.form-page.narrow { max-width: 420px; }
+.form-page h1 { margin-bottom: 8px; }
+.form-card { margin-top: 20px; }
+.form-group { margin-bottom: 16px; }
+.form-group label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 6px;
+}
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    background: #fff;
+}
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 16px;
+}
+.form-grid .btn { grid-column: 1 / -1; justify-self: start; }
+@media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
+
+.records-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+.records-table th, .records-table td {
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+}
+.records-table th {
+    font-weight: 600;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+.records-table tr:last-child td { border-bottom: none; }
+.records-table a { color: var(--primary); text-decoration: none; }
+.records-table a:hover { text-decoration: underline; }
+.actions { white-space: nowrap; }
+
+.demon-header { margin-bottom: 28px; }
+.demon-header h1 { font-size: 1.75rem; margin-bottom: 6px; }
+.demon-header .meta { color: var(--text-muted); margin-bottom: 12px; }
+.req { margin-bottom: 16px; color: var(--text-muted); }
+
+.admin-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+.admin-nav { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.success-text { color: var(--success); font-size: 0.875rem; margin-top: 10px; }
+.hint { font-size: 0.85rem; color: var(--text-muted); margin-top: 12px; }
+.hint code {
+    background: #f1f5f9;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.85em;
+}
+.empty { color: var(--text-muted); font-style: italic; padding: 12px 0; }
+
+.page { display: none; }
+.page.active { display: block; }
+
+.site-footer {
+    text-align: center;
+    padding: 32px 16px;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    border-top: 1px solid var(--border);
+    margin-top: 40px;
+    background: #fff;
+}
+
+.token-warning {
+    background: #fef3c7;
+    border: 1px solid #fcd34d;
+    color: #92400e;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    margin-bottom: 16px;
+}
+  </style>
+</head>
+<body>
+  <div class="side-decoration left"></div>
+  <div class="side-decoration right"></div>
+
+  <header class="top-header">
+    <div class="header-inner">
+      <a href="#" class="logo" onclick="showPage('list'); renderDemonlist('main'); return false;">ABOI<span>.COM</span></a>
+      <nav class="main-nav">
+        <a href="#" onclick="showPage('list'); renderDemonlist(document.querySelector('.list-tabs .tab.active')?.dataset.section || 'main'); return false;">DEMONLIST</a>
+        <a href="#" onclick="showPage('stats'); renderStats(); return false;">Stats Viewer</a>
+        <a href="#" onclick="showPage('submit'); renderSubmitForm(); return false;">Submit Record</a>
+        <a href="#" class="admin-only" style="display:none" onclick="showPage('admin'); renderAdmin(); return false;">Admin</a>
+        <a href="#" class="admin-only" style="display:none" onclick="showPage('admin-demons'); renderAdminDemons(); return false;">Manage Demons</a>
+        <a href="#" id="nav-login" onclick="showPage('login'); return false;">User Area</a>
+        <button type="button" class="linkish" id="nav-logout" style="display:none">Logout</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <div id="flash-messages" class="flash-messages"></div>
+
+    <!-- ========== DEMON LIST ========== -->
+    <div id="page-list" class="page active">
+      <div class="list-tabs">
+        <button type="button" class="tab active" data-section="main">Main List</button>
+        <button type="button" class="tab" data-section="extended">Extended List</button>
+        <button type="button" class="tab" data-section="legacy">Legacy List</button>
+      </div>
+
+      <div class="list-layout">
+        <div>
+          <p id="section-desc" class="section-desc"></p>
+          <div id="demon-list" class="demon-list"></div>
+        </div>
+        <aside class="sidebar">
+          <div class="sidebar-box">
+            <h3>List Editors</h3>
+            <p>Contact any of these people if you have problems with the list or want to see a specific thing changed.</p>
+            <ul class="editor-list">
+              <li>Zorvy</li>
+              <li>ZorvyXD</li>
+              <li>ABOI Moderators</li>
+            </ul>
+          </div>
+          <div class="sidebar-box">
+            <h3>Guidelines</h3>
+            <p>All demonlist operations are carried out in accordance with the demonlist guidelines.</p>
+            <a href="#" class="btn btn-primary" onclick="showPage('submit'); renderSubmitForm(); return false;">Submit a Record</a>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <!-- ========== DEMON DETAIL ========== -->
+    <div id="page-demon" class="page">
+      <div class="demon-header">
+        <h1 id="demon-detail-title"></h1>
+        <p class="meta" id="demon-detail-meta"></p>
+        <p><a id="demon-video-btn" href="#" target="_blank" rel="noopener" class="btn btn-primary" style="display:none">Verification Video</a></p>
+      </div>
+      <div class="list-layout">
+        <div class="main-col">
+          <section class="card">
+            <h2>Records</h2>
+            <p class="req" id="demon-req"></p>
+            <table class="records-table">
+              <thead>
+                <tr><th>#</th><th>Player</th><th>Progress</th><th>Video</th></tr>
+              </thead>
+              <tbody id="demon-records-body"></tbody>
+            </table>
+          </section>
+        </div>
+        <aside class="sidebar">
+          <div class="sidebar-box">
+            <h3>Points</h3>
+            <div id="points-info"></div>
+          </div>
+          <div class="sidebar-box">
+            <a href="#" class="btn btn-primary" onclick="showPage('submit'); renderSubmitForm(); return false;">Submit Record</a>
+            <a href="#" class="btn" style="margin-top:8px" onclick="showPage('list'); return false;">← Back to List</a>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <!-- ========== SUBMIT ========== -->
+    <div id="page-submit" class="page">
+      <div class="form-page">
+        <h1>Submit a Record</h1>
+        <p class="section-desc">Fill out the form below to submit a record. All submissions are reviewed by list editors. A Discord notification will be sent when you submit (if a webhook is configured by the admin).</p>
+        <form id="submit-form" class="card form-card">
+          <div class="form-group">
+            <label for="submit-demon">Demon *</label>
+            <select id="submit-demon" required></select>
+          </div>
+          <div class="form-group">
+            <label for="submit-player">Player Name *</label>
+            <input type="text" id="submit-player" required maxlength="64" placeholder="Your in-game name">
+          </div>
+          <div class="form-group">
+            <label for="submit-progress">Progress (%) *</label>
+            <input type="number" id="submit-progress" required min="1" max="100" placeholder="e.g. 100">
+          </div>
+          <div class="form-group">
+            <label for="submit-video">Video Proof (URL)</label>
+            <input type="url" id="submit-video" placeholder="https://www.youtube.com/watch?v=…">
+          </div>
+          <div class="form-group">
+            <label for="submit-notes">Additional Notes</label>
+            <textarea id="submit-notes" rows="3" placeholder="Optional notes for the list editors"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Submit Record</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ========== STATS ========== -->
+    <div id="page-stats" class="page">
+      <h1>Stats Viewer</h1>
+      <p class="section-desc">Players ranked by approved completions and records on the ABOI Demonlist.</p>
+      <div class="card">
+        <table class="records-table">
+          <thead>
+            <tr><th>Rank</th><th>Player</th><th>Completions</th><th>Total Records</th></tr>
+          </thead>
+          <tbody id="stats-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ========== LOGIN (GitHub PAT – Zorvy only) ========== -->
+    <div id="page-login" class="page">
+      <div class="form-page narrow">
+        <h1>Admin Login</h1>
+        <div class="token-warning">
+          Admin access is restricted to the GitHub accounts <strong>Zorvy</strong> and <strong>ZorvyXD</strong>.
+          Enter a Personal Access Token (classic) belonging to that account.
+        </div>
+        <form id="login-form" class="card form-card">
+          <div class="form-group">
+            <label for="gh-token">GitHub Personal Access Token</label>
+            <input type="password" id="gh-token" required autocomplete="off" placeholder="ghp_…">
+          </div>
+          <button type="submit" class="btn btn-primary">Log In with Token</button>
+        </form>
+        <p class="hint">
+          Create a token at <a href="https://github.com/settings/tokens" target="_blank" rel="noopener">github.com/settings/tokens</a>
+          (classic token, no special scopes required — just enough to call <code>/user</code>).
+          Only tokens from <strong>Zorvy</strong> or <strong>ZorvyXD</strong> will be accepted.
+        </p>
+      </div>
+    </div>
+
+    <!-- ========== ADMIN DASHBOARD ========== -->
+    <div id="page-admin" class="page">
+      <div class="admin-header">
+        <h1>Admin Dashboard</h1>
+        <div class="admin-nav">
+          <a href="#" class="btn" onclick="showPage('admin-demons'); renderAdminDemons(); return false;">Manage Demons</a>
+          <a href="#" class="btn" onclick="showPage('list'); return false;">View List</a>
+        </div>
+      </div>
+
+      <section class="card">
+        <h2>Discord Webhook</h2>
+        <p>When someone submits a record, a notification will be posted to the Discord channel this webhook is attached to.</p>
+        <form id="webhook-form" class="webhook-form">
+          <div class="form-group">
+            <label for="webhook-input">Webhook URL</label>
+            <input type="url" id="webhook-input" placeholder="https://discord.com/api/webhooks/...">
+          </div>
+          <button type="submit" class="btn btn-primary">Save Webhook</button>
+          <div id="webhook-status"></div>
+        </form>
+      </section>
+
+      <section class="card">
+        <h2>Pending Records (<span id="pending-count">0</span>)</h2>
+        <table class="records-table">
+          <thead>
+            <tr>
+              <th>Demon</th>
+              <th>Player</th>
+              <th>Progress</th>
+              <th>Video</th>
+              <th>Submitted</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="pending-body"></tbody>
+        </table>
+      </section>
+    </div>
+
+    <!-- ========== MANAGE DEMONS ========== -->
+    <div id="page-admin-demons" class="page">
+      <div class="admin-header">
+        <h1>Manage Demons</h1>
+        <a href="#" class="btn" onclick="showPage('admin'); renderAdmin(); return false;">← Dashboard</a>
+      </div>
+
+      <section class="card">
+        <h2>Add New Demon</h2>
+        <form id="add-demon-form" class="form-grid">
+          <div class="form-group">
+            <label>Name *</label>
+            <input type="text" id="add-name" required>
+          </div>
+          <div class="form-group">
+            <label>Position *</label>
+            <input type="number" id="add-position" required min="1">
+          </div>
+          <div class="form-group">
+            <label>Requirement %</label>
+            <input type="number" id="add-req" value="100" min="1" max="100">
+          </div>
+          <div class="form-group">
+            <label>Publisher</label>
+            <input type="text" id="add-publisher">
+          </div>
+          <div class="form-group">
+            <label>Verifier</label>
+            <input type="text" id="add-verifier">
+          </div>
+          <div class="form-group">
+            <label>Video URL</label>
+            <input type="url" id="add-video">
+          </div>
+          <div class="form-group">
+            <label>Thumbnail URL</label>
+            <input type="url" id="add-thumbnail" placeholder="https://i.ytimg.com/vi/.../mqdefault.jpg">
+          </div>
+          <div class="form-group">
+            <label>Section</label>
+            <select id="add-section">
+              <option value="main">Main List</option>
+              <option value="extended">Extended List</option>
+              <option value="legacy">Legacy List</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Points (100%)</label>
+            <input type="number" id="add-points" step="0.01" value="0">
+          </div>
+          <button type="submit" class="btn btn-primary">Add Demon</button>
+        </form>
+      </section>
+
+      <section class="card">
+        <h2>Current Demons</h2>
+        <table class="records-table">
+          <thead>
+            <tr>
+              <th>#</th><th>Name</th><th>Req</th><th>Publisher</th><th>Section</th><th>Points</th><th></th>
+            </tr>
+          </thead>
+          <tbody id="demons-admin-body"></tbody>
+        </table>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>ABOI Demonlist &mdash; Inspired by Pointercrate. Not affiliated with RobTop or Pointercrate.</p>
+  </footer>
+
+  <script>
+/**
+ * ABOI Demonlist – Static (GitHub Pages)
+ * Admin access requires a GitHub PAT belonging to the user "Zorvy"
+ */
+
+const STORAGE_KEY = 'aboi_demonlist_data';
+const AUTH_KEY = 'aboi_admin_auth';
+const ALLOWED_GITHUB_USERS = ['Zorvy', 'ZorvyXD'];
+
+// ---------- Default seed data ----------
+const DEFAULT_DEMONS = [];
+
+// ---------- Storage helpers ----------
+function loadData() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch (e) {}
+  const data = {
+    demons: DEFAULT_DEMONS.map(d => ({ ...d })),
+    records: [],
+    webhook: '',
+    nextId: { demon: 200, record: 1 }
+  };
+  saveData(data);
+  return data;
+}
+
+function saveData(data) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+function getAuth() {
+  try {
+    return JSON.parse(sessionStorage.getItem(AUTH_KEY) || 'null');
+  } catch { return null; }
+}
+
+function setAuth(auth) {
+  if (auth) sessionStorage.setItem(AUTH_KEY, JSON.stringify(auth));
+  else sessionStorage.removeItem(AUTH_KEY);
+}
+
+function isAdmin() {
+  const a = getAuth();
+  return a && ALLOWED_GITHUB_USERS.includes(a.user) && a.token;
+}
+
+// ---------- Discord webhook ----------
+async function sendDiscordNotification(record, demon) {
+  const data = loadData();
+  const webhook = data.webhook;
+  if (!webhook) return false;
+
+  const embed = {
+    title: '📝 New Record Submission',
+    color: 0x5865F2,
+    fields: [
+      { name: 'Demon', value: `**#${demon.position} – ${demon.name}**`, inline: true },
+      { name: 'Player', value: record.player_name, inline: true },
+      { name: 'Progress', value: `${record.progress}%`, inline: true },
+      { name: 'Video', value: record.video || 'None provided', inline: false },
+      { name: 'Status', value: '⏳ Pending review', inline: true },
+    ],
+    footer: { text: 'ABOI Demonlist • Record Submission' },
+    timestamp: new Date().toISOString()
+  };
+  if (record.submitter_notes) {
+    embed.fields.push({ name: 'Notes', value: String(record.submitter_notes).slice(0, 500), inline: false });
+  }
+
+  try {
+    const res = await fetch(webhook, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        username: 'ABOI Demonlist',
+        embeds: [embed]
+      })
+    });
+    return res.ok || res.status === 204;
+  } catch (e) {
+    console.error('Webhook error', e);
+    return false;
+  }
+}
+
+// ---------- UI helpers ----------
+function showFlash(msg, type = 'success') {
+  const box = document.getElementById('flash-messages');
+  if (!box) return;
+  const el = document.createElement('div');
+  el.className = `flash ${type}`;
+  el.textContent = msg;
+  box.appendChild(el);
+  setTimeout(() => el.remove(), 5000);
+}
+
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const page = document.getElementById(`page-${name}`);
+  if (page) page.classList.add('active');
+  window.scrollTo(0, 0);
+  updateNav();
+}
+
+function updateNav() {
+  const adminLinks = document.querySelectorAll('.admin-only');
+  const loginBtn = document.getElementById('nav-login');
+  const logoutBtn = document.getElementById('nav-logout');
+  if (isAdmin()) {
+    adminLinks.forEach(el => el.style.display = '');
+    if (loginBtn) loginBtn.style.display = 'none';
+    if (logoutBtn) logoutBtn.style.display = '';
+  } else {
+    adminLinks.forEach(el => el.style.display = 'none');
+    if (loginBtn) loginBtn.style.display = '';
+    if (logoutBtn) logoutBtn.style.display = 'none';
+  }
+}
+
+// ---------- Render functions ----------
+function renderDemonlist(section = 'main') {
+  const data = loadData();
+  const list = data.demons
+    .filter(d => d.section === section)
+    .sort((a, b) => a.position - b.position);
+
+  const desc = {
+    main: 'The main section of the Demonlist. These demons are the hardest rated levels in the game. Records are accepted above a given threshold and award a large amount of points!',
+    extended: "These are demons that don't qualify for the main section of the list, but are still of high relevance. Only 100% records are accepted for these demons!",
+    legacy: 'These are demons that used to be on the list, but got pushed off as new demons were added.'
+  };
+
+  document.getElementById('section-desc').textContent = desc[section] || '';
+  document.querySelectorAll('.list-tabs .tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.section === section);
+  });
+
+  const container = document.getElementById('demon-list');
+  if (!list.length) {
+    container.innerHTML = '<p class="empty">No demons in this section yet.</p>';
+    return;
+  }
+
+  container.innerHTML = list.map(d => {
+    const reqPts = (d.points * (d.requirement / 100)).toFixed(2);
+    const fullPts = Number(d.points).toFixed(2);
+    return `
+      <div class="demon-card" onclick="openDemon(${d.position})">
+        <div class="demon-thumb">
+          ${d.thumbnail
+            ? `<img src="${escapeHtml(d.thumbnail)}" alt="${escapeHtml(d.name)}" style="width:100%;height:100%;object-fit:cover;">`
+            : `<div class="thumb-placeholder">${d.name.slice(0, 2).toUpperCase()}</div>`}
+        </div>
+        <div class="demon-info">
+          <h2 class="demon-title">#${d.position} – ${escapeHtml(d.name)}</h2>
+          <p class="demon-publisher">published by <strong>${escapeHtml(d.publisher || 'Unknown')}</strong></p>
+          ${section === 'main' ? `<p class="demon-points">${reqPts} (${d.requirement}%) — ${fullPts} (100%) points</p>` : ''}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function openDemon(position) {
+  const data = loadData();
+  const demon = data.demons.find(d => d.position === position);
+  if (!demon) return showFlash('Demon not found.', 'error');
+
+  const records = data.records
+    .filter(r => r.demon_id === demon.id && r.status === 'approved')
+    .sort((a, b) => b.progress - a.progress || a.submitted_at.localeCompare(b.submitted_at));
+
+  document.getElementById('demon-detail-title').textContent = `#${demon.position} – ${demon.name}`;
+  document.getElementById('demon-detail-meta').innerHTML =
+    `published by <strong>${escapeHtml(demon.publisher || '')}</strong> · verified by <strong>${escapeHtml(demon.verifier || '')}</strong>`;
+
+  const videoBtn = document.getElementById('demon-video-btn');
+  if (demon.video) {
+    videoBtn.href = demon.video;
+    videoBtn.style.display = '';
+  } else {
+    videoBtn.style.display = 'none';
+  }
+
+  document.getElementById('demon-req').innerHTML = `Requirement: <strong>${demon.requirement}%</strong>`;
+
+  const tbody = document.getElementById('demon-records-body');
+  if (records.length) {
+    tbody.innerHTML = records.map((r, i) => `
+      <tr>
+        <td>${i + 1}</td>
+        <td>${escapeHtml(r.player_name)}</td>
+        <td>${r.progress}%</td>
+        <td>${r.video ? `<a href="${escapeHtml(r.video)}" target="_blank" rel="noopener">Proof</a>` : '—'}</td>
+      </tr>`).join('');
+  } else {
+    tbody.innerHTML = '<tr><td colspan="4" class="empty">No approved records yet.</td></tr>';
+  }
+
+  document.getElementById('points-info').innerHTML =
+    demon.section === 'main'
+      ? `<p>${Number(demon.points).toFixed(2)} points for 100%</p>
+         <p>${(demon.points * demon.requirement / 100).toFixed(2)} points at requirement (${demon.requirement}%)</p>`
+      : '<p>Extended / Legacy – completion only</p>';
+
+  showPage('demon');
+}
+
+function renderSubmitForm() {
+  const data = loadData();
+  const demons = data.demons
+    .filter(d => d.section !== 'legacy')
+    .sort((a, b) => a.position - b.position);
+  const sel = document.getElementById('submit-demon');
+  sel.innerHTML = '<option value="">Select a demon…</option>' +
+    demons.map(d => `<option value="${d.id}">#${d.position} – ${escapeHtml(d.name)} (req. ${d.requirement}%)</option>`).join('');
+}
+
+async function handleSubmit(e) {
+  e.preventDefault();
+  const data = loadData();
+  const demonId = parseInt(document.getElementById('submit-demon').value, 10);
+  const player = document.getElementById('submit-player').value.trim();
+  const progress = parseInt(document.getElementById('submit-progress').value, 10);
+  const video = document.getElementById('submit-video').value.trim();
+  const notes = document.getElementById('submit-notes').value.trim();
+
+  if (!demonId || !player || isNaN(progress)) {
+    showFlash('Please fill in all required fields.', 'error');
+    return;
+  }
+
+  const demon = data.demons.find(d => d.id === demonId);
+  if (!demon) {
+    showFlash('Invalid demon.', 'error');
+    return;
+  }
+  if (progress < demon.requirement || progress > 100) {
+    showFlash(`Progress must be between ${demon.requirement}% and 100%.`, 'error');
+    return;
+  }
+
+  const record = {
+    id: data.nextId.record++,
+    demon_id: demonId,
+    player_name: player,
+    progress,
+    video,
+    submitter_notes: notes,
+    status: 'pending',
+    submitted_at: new Date().toISOString(),
+    reviewer_notes: ''
+  };
+  data.records.push(record);
+  saveData(data);
+
+  const sent = await sendDiscordNotification(record, demon);
+  if (sent) {
+    showFlash('Record submitted! List editors have been notified on Discord.', 'success');
+  } else {
+    showFlash('Record submitted! (Discord notification not sent — webhook may not be configured)', 'success');
+  }
+
+  e.target.reset();
+  showPage('list');
+  renderDemonlist(document.querySelector('.list-tabs .tab.active')?.dataset.section || 'main');
+}
+
+function renderStats() {
+  const data = loadData();
+  const map = {};
+  data.records.filter(r => r.status === 'approved').forEach(r => {
+    if (!map[r.player_name]) map[r.player_name] = { name: r.player_name, records: 0, completions: 0 };
+    map[r.player_name].records++;
+    if (r.progress === 100) map[r.player_name].completions++;
+  });
+  const players = Object.values(map).sort((a, b) => b.completions - a.completions || b.records - a.records);
+
+  const tbody = document.getElementById('stats-body');
+  if (!players.length) {
+    tbody.innerHTML = '<tr><td colspan="4" class="empty">No approved records yet.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = players.map((p, i) => `
+    <tr>
+      <td>#${i + 1}</td>
+      <td>${escapeHtml(p.name)}</td>
+      <td>${p.completions}</td>
+      <td>${p.records}</td>
+    </tr>`).join('');
+}
+
+// ---------- Admin (Zorvy PAT only) ----------
+async function handleAdminLogin(e) {
+  e.preventDefault();
+  const token = document.getElementById('gh-token').value.trim();
+  if (!token) {
+    showFlash('Please enter a GitHub Personal Access Token.', 'error');
+    return;
+  }
+
+  const btn = e.target.querySelector('button[type="submit"]');
+  btn.disabled = true;
+  btn.textContent = 'Verifying…';
+
+  try {
+    const res = await fetch('https://api.github.com/user', {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/vnd.github+json'
+      }
+    });
+
+    if (!res.ok) {
+      showFlash('Invalid or expired token. GitHub returned ' + res.status, 'error');
+      btn.disabled = false;
+      btn.textContent = 'Log In with Token';
+      return;
+    }
+
+    const user = await res.json();
+    if (!ALLOWED_GITHUB_USERS.includes(user.login)) {
+      showFlash(`Access denied. Admin is restricted to: ${ALLOWED_GITHUB_USERS.join(', ')}. You are logged in as "${user.login}".`, 'error');
+      btn.disabled = false;
+      btn.textContent = 'Log In with Token';
+      return;
+    }
+
+    setAuth({ user: user.login, token, avatar: user.avatar_url });
+    showFlash(`Welcome, ${user.login}! Admin access granted.`, 'success');
+    document.getElementById('gh-token').value = '';
+    showPage('admin');
+    renderAdmin();
+  } catch (err) {
+    showFlash('Network error while contacting GitHub. Try again.', 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Log In with Token';
+  }
+}
+
+function adminLogout() {
+  setAuth(null);
+  showFlash('Logged out.', 'info');
+  showPage('list');
+  updateNav();
+}
+
+function renderAdmin() {
+  if (!isAdmin()) {
+    showPage('login');
+    return;
+  }
+  const data = loadData();
+  document.getElementById('webhook-input').value = data.webhook || '';
+  document.getElementById('webhook-status').innerHTML = data.webhook
+    ? '<p class="success-text">✓ Webhook is currently configured.</p>'
+    : '<p class="hint">No webhook set yet. Submissions will still be saved locally, but no Discord message will be sent.</p>';
+
+  const pending = data.records
+    .filter(r => r.status === 'pending')
+    .sort((a, b) => b.submitted_at.localeCompare(a.submitted_at));
+
+  const tbody = document.getElementById('pending-body');
+  document.getElementById('pending-count').textContent = pending.length;
+
+  if (!pending.length) {
+    tbody.innerHTML = '<tr><td colspan="6" class="empty">No pending records. Nice!</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = pending.map(r => {
+    const demon = data.demons.find(d => d.id === r.demon_id) || { position: '?', name: '?' };
+    return `
+      <tr>
+        <td>#${demon.position} ${escapeHtml(demon.name)}</td>
+        <td>${escapeHtml(r.player_name)}</td>
+        <td>${r.progress}%</td>
+        <td>${r.video ? `<a href="${escapeHtml(r.video)}" target="_blank">Link</a>` : '—'}</td>
+        <td>${new Date(r.submitted_at).toLocaleString()}</td>
+        <td class="actions">
+          <button class="btn btn-sm btn-success" onclick="reviewRecord(${r.id}, 'approved')">Approve</button>
+          <button class="btn btn-sm btn-danger" onclick="reviewRecord(${r.id}, 'rejected')">Reject</button>
+        </td>
+      </tr>`;
+  }).join('');
+}
+
+function reviewRecord(id, status) {
+  if (!isAdmin()) return;
+  const data = loadData();
+  const rec = data.records.find(r => r.id === id);
+  if (!rec) return;
+  rec.status = status;
+  rec.reviewed_at = new Date().toISOString();
+  saveData(data);
+  showFlash(`Record ${status}.`, 'success');
+  renderAdmin();
+}
+
+function saveWebhook(e) {
+  e.preventDefault();
+  if (!isAdmin()) return;
+  const data = loadData();
+  data.webhook = document.getElementById('webhook-input').value.trim();
+  saveData(data);
+  showFlash(data.webhook ? 'Discord webhook saved!' : 'Webhook removed.', 'success');
+  renderAdmin();
+}
+
+function renderAdminDemons() {
+  if (!isAdmin()) { showPage('login'); return; }
+  const data = loadData();
+  const list = [...data.demons].sort((a, b) => a.position - b.position);
+  const tbody = document.getElementById('demons-admin-body');
+  tbody.innerHTML = list.map(d => `
+    <tr>
+      <td>${d.position}</td>
+      <td>${escapeHtml(d.name)}</td>
+      <td>${d.requirement}%</td>
+      <td>${escapeHtml(d.publisher || '')}</td>
+      <td>${d.section}</td>
+      <td>${d.points}</td>
+      <td>
+        <button class="btn btn-sm btn-danger" onclick="deleteDemon(${d.id})">Delete</button>
+      </td>
+    </tr>`).join('');
+}
+
+function addDemon(e) {
+  e.preventDefault();
+  if (!isAdmin()) return;
+  const data = loadData();
+  const name = document.getElementById('add-name').value.trim();
+  const position = parseInt(document.getElementById('add-position').value, 10);
+  const requirement = parseInt(document.getElementById('add-req').value, 10) || 100;
+  const publisher = document.getElementById('add-publisher').value.trim();
+  const verifier = document.getElementById('add-verifier').value.trim();
+  const video = document.getElementById('add-video').value.trim();
+  const thumbnail = document.getElementById('add-thumbnail').value.trim();
+  const section = document.getElementById('add-section').value;
+  const points = parseFloat(document.getElementById('add-points').value) || 0;
+
+  if (!name || isNaN(position)) {
+    showFlash('Name and position are required.', 'error');
+    return;
+  }
+
+  data.demons.push({
+    id: data.nextId.demon++,
+    name, position, requirement, publisher, verifier, video, thumbnail, section, points
+  });
+  saveData(data);
+  showFlash(`Added ${name} at #${position}.`, 'success');
+  e.target.reset();
+  renderAdminDemons();
+}
+
+function deleteDemon(id) {
+  if (!isAdmin()) return;
+  if (!confirm('Delete this demon and all its records?')) return;
+  const data = loadData();
+  data.demons = data.demons.filter(d => d.id !== id);
+  data.records = data.records.filter(r => r.demon_id !== id);
+  saveData(data);
+  showFlash('Demon deleted.', 'success');
+  renderAdminDemons();
+}
+
+// ---------- Utils ----------
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+// ---------- Boot ----------
+document.addEventListener('DOMContentLoaded', () => {
+  // Tabs
+  document.querySelectorAll('.list-tabs .tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      renderDemonlist(tab.dataset.section);
+    });
+  });
+
+  // Forms
+  document.getElementById('submit-form')?.addEventListener('submit', handleSubmit);
+  document.getElementById('login-form')?.addEventListener('submit', handleAdminLogin);
+  document.getElementById('webhook-form')?.addEventListener('submit', saveWebhook);
+  document.getElementById('add-demon-form')?.addEventListener('submit', addDemon);
+
+  // Nav
+  document.getElementById('nav-logout')?.addEventListener('click', adminLogout);
+
+  // Initial
+  loadData();
+  renderDemonlist('main');
+  updateNav();
+  showPage('list');
+});
+
+// Expose for onclick handlers
+window.openDemon = openDemon;
+window.reviewRecord = reviewRecord;
+window.deleteDemon = deleteDemon;
+window.showPage = showPage;
+window.renderDemonlist = renderDemonlist;
+window.renderSubmitForm = renderSubmitForm;
+window.renderStats = renderStats;
+window.renderAdmin = renderAdmin;
+window.renderAdminDemons = renderAdminDemons;
+  </script>
+</body>
+</html>
