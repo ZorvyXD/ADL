@@ -1,1 +1,10 @@
-
+{
+  "demons": [],
+  "records": [],
+  "webhook": "",
+  "webhook_submissions": "",
+  "nextId": {
+    "demon": 200,
+    "record": 1
+  }
+}
